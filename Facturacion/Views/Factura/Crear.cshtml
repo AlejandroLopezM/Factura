@@ -1,0 +1,128 @@
+﻿@model Facturacion.Models.FacturaViewModel
+
+<h2>Nueva Factura</h2>
+
+<form asp-action="Crear" method="post" class="container">
+    <div class="form-group">
+        <label>Tipo de Cliente:</label>
+        @if (Model.TipoCliente != null)
+        {
+            <select asp-for="TipoCliente.Id" class="form-control">
+                <option value="@Model.TipoCliente.Id">@Model.TipoCliente.Nombre</option>
+            </select>
+            <span asp-validation-for="TipoCliente.Id" class="text-danger"></span>
+        }
+        else
+        {
+            <p>El tipo de cliente no está disponible.</p>
+        }
+    </div>
+
+    <div class="form-group">
+        <label>Cliente:</label>
+        <select asp-for="ClienteId" class="form-control" asp-items="@(new SelectList(Model.Clientes, "Id", "Nombre"))"></select>
+        <span asp-validation-for="ClienteId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Número de Factura:</label>
+        <input asp-for="NumeroFactura" class="form-control" />
+        <span asp-validation-for="NumeroFactura" class="text-danger"></span>
+    </div>
+
+    <!-- Sección "Agregar Producto" -->
+    <h3>Agregar Producto</h3>
+
+  
+    <div class="form-group">
+        <button type="button" class="btn btn-secondary" id="btnAgregarProducto">Agregar Producto</button>
+    </div>
+
+    <div class="row">
+      @if (Model.DetalleFacturaViewModel?.Any() ?? false)
+      {
+        @foreach (var detalleFactura in Model.DetalleFacturaViewModel)
+        {
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Seleccionar Producto:</label>
+                    @if (Model.ProductosDisponibles?.Any() ?? false)
+                    {
+                        <select asp-for="@detalleFactura.ProductoId" asp-items="@(new SelectList(Model.ProductosDisponibles, "Id", "Nombre"))" class="form-control"></select>
+                    }
+                    else
+                    {
+                        <p>No hay productos disponibles.</p>
+                    }
+                </div>
+            </div>
+           
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Cantidad:</label>
+                    <input type="text" asp-for="@detalleFactura.Cantidad" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Imagen:</label>
+                   
+                    @foreach (var producto in Model.ProductosDisponibles)
+                    {
+                        @if (producto.Id == detalleFactura.ProductoId)
+                        {
+                            <input type="text" asp-for="@producto.Imagen" class="form-control" readonly />
+                            <label>Precio Unitario:</label>
+                            <input type="text" asp-for="@producto.PrecioUnitario" class="form-control" readonly />
+
+                        }
+                    }
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>Total:</label>
+                    <input type="text" asp-for="@detalleFactura.TotalProducto" class="form-control" readonly />
+                </div>
+            </div>
+        }
+      }
+      else
+      {
+      <p>No hay detalles de factura disponibles.</p>
+      }
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Subtotales:</label>
+                <input type="text" asp-for="Subtotal" class="form-control" readonly />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Impuestos (19%):</label>
+                <input type="text" asp-for="Impuestos" class="form-control" readonly />
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Total:</label>
+                <input type="text" asp-for="Total" class="form-control" readonly />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+</form>
+
+@section scripts {
+    <script>
+        document.getElementById("btnAgregarProducto").addEventListener("click", function () {
+         
+        });
+    </script>
+}
